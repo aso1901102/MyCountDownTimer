@@ -9,4 +9,6 @@
     <color name="colorPrimaryDark">#3C9C5A</color>
     <color name="colorAccent">#757575</color>
 
+    <!--メインの文字色を定義して指定する-->
+    <color name="primaryText">#757575</color>
 </resources>

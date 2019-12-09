@@ -10,6 +10,10 @@
         <!--スタイルの追加定義-->
         <!--背景の定義-->
         <item name= "android:windowBackground">@drawable/background</item>
+        <!--プライマリの文字色-->
+        <item name="android:textColorPrimary">@color/primaryText</item>
+        <!--使用するフォント（細いサンシェリフ体）-->
+        <item name="android:fontFamily">sans-serif-thin</item>
     </style>
 
 </resources>
