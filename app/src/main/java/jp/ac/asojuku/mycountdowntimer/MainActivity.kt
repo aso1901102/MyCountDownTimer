@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.concurrent.CompletableFuture
+import kotlin.concurrent.timer
 
 class MainActivity : AppCompatActivity() {
 
@@ -38,5 +39,9 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        //タイマーの表示時間を初期設定
+        timerText.text = "3:00";
+
     }
 }
