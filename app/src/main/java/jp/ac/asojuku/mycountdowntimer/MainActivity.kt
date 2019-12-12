@@ -18,6 +18,9 @@ class MainActivity : AppCompatActivity() {
         //親クラスのコンストラクタに引き渡す(チック刻み間隔)
         countDownInterval:Long
     ):CountDownTimer(millisInFuture,countDownInterval)/*引き渡す親クラスの指定*/{
+        //タイマーが動いているかを判定するフラグ
+        var isRunning = false;
+
         //カウントダウン終了後のイベントで呼ばれるコールバックメソッド
         override fun onFinish() {
             timerText.text = "0:00";
@@ -43,5 +46,30 @@ class MainActivity : AppCompatActivity() {
         //タイマーの表示時間を初期設定
         timerText.text = "3:00";
 
+        //カウントダウンタイマーの継承クラスインスタンスを生成する（設定時間カウントダウン、100ミリ秒毎にチック）
+        val timer = MyCountDownTimer(3*60*1000,100);
+        //FAVがクリックされた時のコールバックメソッド
+        this.playStop.setOnClickListener{
+            timer.isRunning = when(timer.isRunning){
+                true -> {
+                    //タイマーをストップ
+                    //タイマーインスタンスの動きを止める
+                    timer.cancel();
+
+                    //FAVボタンの画像を切り替える
+                    playStop.setImageResource(R.drawable.ic_play_circle_filled_black_24dp);
+                    false;
+                }
+                false -> {
+                    //タイマーをスタート
+                    //タイマーインスタンスの動きをスタートする
+                    timer.start();
+
+                    //FAVボタンの画像を切り替える
+                    playStop.setImageResource(R.drawable.ic_stop_black_24dp)
+                    true;
+                }
+            }
+        }
     }
 }
