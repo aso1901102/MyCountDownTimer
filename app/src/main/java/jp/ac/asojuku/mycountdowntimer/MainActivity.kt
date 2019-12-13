@@ -1,5 +1,9 @@
 package jp.ac.asojuku.mycountdowntimer
 
+import android.media.AudioAttributes
+import android.media.AudioManager
+import android.media.SoundPool
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -8,6 +12,14 @@ import java.util.concurrent.CompletableFuture
 import kotlin.concurrent.timer
 
 class MainActivity : AppCompatActivity() {
+    //初期設定時間
+    //val defaultTime = this.timerText
+
+    //Soundpool型のインスタンス変数のフィールドプロパティを宣言
+    private lateinit var soundPool: SoundPool;
+    //効果音の音源(Sound)のリソースID
+    //仮の初期値で初期化
+    private  var soundResId = 0;
 
     //内部クラスとしてカウントダウンタイマー継承クラスを定義する
     //inner classで内部クラスを宣言
@@ -24,6 +36,17 @@ class MainActivity : AppCompatActivity() {
         //カウントダウン終了後のイベントで呼ばれるコールバックメソッド
         override fun onFinish() {
             timerText.text = "0:00";
+
+            //音源を鳴らす
+            soundPool.play(
+                soundResId,            //サウンドリソースID（鳴らす音)を指定する
+                1.0f,       //左ボリューム
+                1.0f,      //右ボリューム
+                0,             //優先度
+                0,               //ループする（１）、ループしない（０）
+                1.0f              //再生スピード（0.5　～　2.0）
+            )
+
         }
 
         //チックイベント毎に呼ばれるコールバックメソッド
@@ -43,11 +66,13 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        //タイマーの表示時間を初期設定
-        timerText.text = "3:00";
+        //timerの時間表示を初期設定
+
+        timerText.text = "0:05";
 
         //カウントダウンタイマーの継承クラスインスタンスを生成する（設定時間カウントダウン、100ミリ秒毎にチック）
-        val timer = MyCountDownTimer(3*60*1000,100);
+        //val timer = MyCountDownTimer(3*60*1000,100);
+        val timer = MyCountDownTimer(5*1000,100);
         //FAVがクリックされた時のコールバックメソッド
         this.playStop.setOnClickListener{
             timer.isRunning = when(timer.isRunning){
@@ -71,5 +96,43 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    //画面が表示・再表示されるイベントのコールバックメソッド
+    override fun onResume() {
+        super.onResume()
+        //画面が表示されている間だけインスタンスをメモリに保持する
+        //SoundPoolクラスのインスタンスを変数に代入
+        this.soundPool =
+            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP){
+                //4.4 LOLLIPOPより古い端末(非推奨のメソッドを利用）
+                SoundPool(     //SoundPoolクラスのコンストラクタ
+                    2,                  //同時にならせる音源の数
+                    AudioManager.STREAM_ALARM,  //オーディオの種類
+                    0                 //音源の音質。
+                );
+            }else{
+                val audioAttributes = AudioAttributes.Builder()
+                                                        .setUsage(AudioAttributes.USAGE_ALARM).build();
+                //オーディオ設定を使ってSoundPoolのインスタンスを作る
+                SoundPool.Builder().setMaxStreams(1)                //同時音源数
+                    .setAudioAttributes(audioAttributes).build();   //オーディオ設定を登録してビルド
+            }
+
+
+        //鳴らすサウンドファイルのリソースIDを設定
+        this.soundResId = soundPool.load(
+            this,       //アクティビティのインスタンス
+            R.raw.bellsound,    //音源のリソースID
+            1           //音の優先順位　現在未使用
+        )
+    }
+
+    //画面が非表示の時のコールバックメソッド
+    override fun onPause() {
+        super.onPause()
+
+        //SoundPoolインスタンスをメモリから解放
+        this.soundPool.release();
     }
 }
