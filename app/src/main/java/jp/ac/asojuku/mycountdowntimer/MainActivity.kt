@@ -15,7 +15,7 @@ class MainActivity : AppCompatActivity() {
     //初期設定時間
     //val defaultTime = this.timerText
 
-    //Soundpool型のインスタンス変数のフィールドプロパティを宣言
+    //SoundPool型のインスタンス変数のフィールドプロパティを宣言
     private lateinit var soundPool: SoundPool;
     //効果音の音源(Sound)のリソースID
     //仮の初期値で初期化
